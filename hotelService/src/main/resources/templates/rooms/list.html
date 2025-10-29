@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>Habitacions - Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/hotels.css}">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 th:text="'Habitacions de ' + ${hotel.name}">Habitacions</h1>
+
+        <div class="header-actions">
+            <a th:href="@{/hotels}" class="btn">← Tornar als hotels</a>
+            <a th:href="@{/rooms/create/{hotelId}(hotelId=${hotel.id})}" class="btn-create">+ Nova Habitació</a>
+        </div>
+    </header>
+
+    <section class="cards">
+        <div th:each="room : ${rooms}" class="card">
+            <div class="card-content">
+                <h2 th:text="${room.name}">Nom Habitació</h2>
+                <p>
+                    <strong>Número:</strong> <span th:text="${room.number}">101</span><br>
+                    <strong>Planta:</strong> <span th:text="${room.floor}">1</span><br>
+                    <strong>Tipus:</strong> 
+                   <td th:text="${room.roomType != null ? room.roomType.description : 'Sense tipus'}"></td>
+
+
+                    <strong>Disponibilitat:</strong>
+                    <span th:text="${room.isAvailable} ? 'Disponible' : 'Ocupada'">Disponible</span>
+                </p>
+
+                <div class="actions">
+                    <a th:href="@{/rooms/edit/{id}(id=${room.id})}" class="btn">Editar</a>
+                    <a th:href="@{/rooms/delete/{id}(id=${room.id})}"
+                       class="btn btn-danger"
+                       onclick="return confirm('Segur que vols eliminar aquesta habitació?');">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="pagination">
+        <a th:if="${currentPage > 0}" 
+           th:href="@{/rooms/{hotelId}(hotelId=${hotel.id}, page=${currentPage - 1})}">← Anterior</a>
+
+        <span>Pàgina <span th:text="${currentPage + 1}"></span> de <span th:text="${totalPages}"></span></span>
+
+        <a th:if="${currentPage + 1 < totalPages}" 
+           th:href="@{/rooms/{hotelId}(hotelId=${hotel.id}, page=${currentPage + 1})}">Següent →</a>
+    </div>
+</div>
+
+</body>
+</html>

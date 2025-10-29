@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${hotel.id != null} ? 'Editar Hotel' : 'Crear Hotel'">Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Editar Hotel</h1>
+    <form th:action="@{/hotels/edit/{id}(id=${hotel.id})}" th:object="${hotel}" method="post">
+        <label>Nom: <input type="text" th:field="*{name}"/></label><br/>
+        <label>Adreça: <input type="text" th:field="*{address}"/></label><br/>
+        <label>Ubicació: <input type="text" th:field="*{location}"/></label><br/>
+        <button type="submit">Guardar</button>
+    </form>
+    <a href="/hotels">Tornar</a>
+</div>
+</body>
+</html>

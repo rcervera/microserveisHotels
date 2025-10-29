@@ -1,0 +1,150 @@
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 40px auto;
+}
+
+header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    color: #444;
+}
+
+.search-bar {
+    display: flex;
+    gap: 8px;
+}
+
+.search-bar input[type="text"] {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 240px;
+    transition: 0.3s;
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: #999;
+    outline: none;
+}
+
+.search-bar button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-bar button:hover {
+    background-color: #357ab8;
+}
+
+.btn-create {
+    background-color: #2ecc71;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn-create:hover {
+    background-color: #27ae60;
+}
+
+/* ----- Cards ----- */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.card p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #666;
+}
+
+.actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    text-decoration: none;
+    background-color: #4a90e2;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #357ab8;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+/* ----- Paginació ----- */
+
+.pagination {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.95rem;
+}
+
+.pagination a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #4a90e2;
+}
+
+.pagination a:hover {
+    text-decoration: underline;
+}

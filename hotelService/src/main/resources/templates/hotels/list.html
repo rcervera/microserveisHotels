@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>Llista d'Hotels</title>
+    <link rel="stylesheet" th:href="@{/css/hotels.css}">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Llista d'Hotels</h1>
+
+        <form th:action="@{/hotels}" method="get" class="search-bar">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Cerca per nom, adreça o ubicació...">
+            <button type="submit">Cerca</button>
+        </form>
+
+        <a href="/hotels/create" class="btn-create">+ Nou Hotel</a>
+    </header>
+
+    <section class="cards">
+        <div th:each="hotel : ${hotels}" class="card">
+            <div class="card-content">
+                <h2 th:text="${hotel.name}">Nom de l'hotel</h2>
+                <p>
+                    <strong>Adreça:</strong> <span th:text="${hotel.address}">Adreça</span><br>
+                    <strong>Ubicació:</strong> <span th:text="${hotel.location}">Ubicació</span>
+                </p>
+                <div class="actions">
+                    <a th:href="@{/rooms/{hotelId}(hotelId=${hotel.id})}" class="btn">Habitacions</a>
+                    <a th:href="@{/hotels/edit/{id}(id=${hotel.id})}" class="btn">Editar</a>
+                    <a th:href="@{/hotels/delete/{id}(id=${hotel.id})}" 
+                       class="btn btn-danger"
+                       onclick="return confirm('Segur que vols eliminar aquest hotel?');">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="pagination">
+        <a th:if="${currentPage > 0}" th:href="@{/hotels(page=${currentPage - 1}, keyword=${keyword})}">← Anterior</a>
+        <span>Pàgina <span th:text="${currentPage + 1}"></span> de <span th:text="${totalPages}"></span></span>
+        <a th:if="${currentPage + 1 < totalPages}" th:href="@{/hotels(page=${currentPage + 1}, keyword=${keyword})}">Següent →</a>
+    </div>
+</div>
+
+</body>
+</html>
