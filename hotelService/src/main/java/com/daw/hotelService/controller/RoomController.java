@@ -11,8 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*")
+@RequestMapping(value = "/hotels/rooms")
 @Controller
-@RequestMapping("/rooms")
 public class RoomController {
 
     @Autowired

@@ -9,9 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-
+@CrossOrigin("*")
+@RequestMapping(value = "/hotels/hotel")
 @Controller
-@RequestMapping("/hotels")
 public class HotelController {
 
     private final HotelService hotelService;
@@ -20,27 +20,27 @@ public class HotelController {
         this.hotelService = hotelService;    }
 
    
-    @GetMapping
-public String listHotels(Model model,
+    @GetMapping("/list")
+    public String listHotels(Model model,
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "5") int size,
                          @RequestParam(defaultValue = "") String keyword) {
 
-    Pageable pageable = PageRequest.of(page, size);
-    Page<Hotel> hotelPage;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Hotel> hotelPage;
 
-    if (keyword.isEmpty()) {
-        hotelPage = hotelService.findAll(pageable);
-    } else {
-        hotelPage = hotelService.search(keyword, pageable);
+        if (keyword.isEmpty()) {
+            hotelPage = hotelService.findAll(pageable);
+        } else {
+            hotelPage = hotelService.search(keyword, pageable);
+        }
+
+        model.addAttribute("hotels", hotelPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", hotelPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+        return "hotels/list";
     }
-
-    model.addAttribute("hotels", hotelPage.getContent());
-    model.addAttribute("currentPage", page);
-    model.addAttribute("totalPages", hotelPage.getTotalPages());
-    model.addAttribute("keyword", keyword);
-    return "hotels/list";
-}
 
 
     @GetMapping("/create")

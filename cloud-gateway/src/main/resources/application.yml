@@ -1,21 +1,18 @@
-
 server:
-  port: 8080
+  port: 8081
 
 spring:
   application:
-    name: api-gateway
-
+    name: API-GATEWAY
   cloud:
     gateway:
       routes:
-        # RUTA cap a HOTEL-SERVICE
         - id: HOTEL-SERVICE
           uri: lb://HOTEL-SERVICE
-          predicates:            
-            - Path=/hotels/**, /css/**, /js/**, /images/**
+          predicates:
+            - Path=/hotels/**
+        
 
-     
 eureka:
   client:
     register-with-eureka: true
@@ -24,10 +21,3 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     hostname: localhost
-  
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
