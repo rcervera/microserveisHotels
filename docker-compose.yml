@@ -21,8 +21,6 @@ services:
     networks:
       - hotel-network
 
-  
-
   hotel-service:
     build: ./hotelService
     container_name: hotel-service
