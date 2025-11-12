@@ -14,7 +14,7 @@ spring:
           # preguntarà a Eureka on és "HOTEL-SERVICE"
           uri: lb://HOTEL-SERVICE
           predicates:
-            - Path=/hotels/**, /css/**, /js/**, /images/**
+            - Path=/api/hotels/**, /api/rooms/**, /api/roomtypes/**
 
 # --- Configuració d'Eureka ---
 eureka:

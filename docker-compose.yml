@@ -63,6 +63,19 @@ services:
       PMA_PASSWORD: root
     networks:
       - hotel-network
+  
+  # NOU SERVEI DE FRONTEND (REACT)
+  ui-service:
+    build: ./ui-service
+    container_name: ui-service
+    ports:
+      # L'usuari visitarà localhost:3000
+      # El port intern de Nginx és el 80
+      - "3000:80"
+    depends_on:
+      - api-gateway  # S'espera a que l'API Gateway s'iniciï
+    networks:
+      - hotel-network
 
 volumes:
   mysql_data:
