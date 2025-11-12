@@ -35,7 +35,9 @@ public class AuthController {
         try {
             String token = authService.login(request.getUsername(), request.getPassword());
             return ResponseEntity.ok().body(new AuthResponse(token));
+           
         } catch (RuntimeException e) {
+            System.out.println("error");
             return ResponseEntity.status(401).body(e.getMessage());
         }
     }
