@@ -5,16 +5,18 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { login, error, loading, roles } = useAuthStore();
+
+  const { login, loading, error } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     await login(username, password);
 
-    const r = useAuthStore.getState().roles;
-    if (r.includes("ADMIN")) navigate("/hotels");
-    else if (r.includes("USER")) navigate("/reserva");
+    if (useAuthStore.getState().isAuthenticated) {
+      navigate("/dashboard");
+    }
   };
 
   return (
