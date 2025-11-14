@@ -62,7 +62,7 @@ public class DataSeeder {
                     hotelRepo.save(hotel);
 
                     // Crear entre 40 i 80 habitacions per hotel
-                    int numRooms = 40 + random.nextInt(41);
+                    int numRooms = 4 + random.nextInt(4);
                     for (int j = 1; j <= numRooms; j++) {
                         Room room = new Room();
                         room.setHotel(hotel);

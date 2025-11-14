@@ -15,6 +15,11 @@ spring:
           uri: lb://HOTEL-SERVICE
           predicates:
             - Path=/api/hotels/**, /api/rooms/**, /api/roomtypes/**
+        # --- RUTA cap a AUTH-SERVICE ---
+        - id: AUTH-SERVICE
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
 
 # --- Configuració d'Eureka ---
 eureka:

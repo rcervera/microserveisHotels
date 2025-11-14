@@ -1,11 +1,15 @@
 package com.daw.hotel.auth.service;
 
+import com.daw.hotel.auth.dto.AuthResponse;
+import com.daw.hotel.auth.model.Role;
 import com.daw.hotel.auth.model.User;
 import com.daw.hotel.auth.repository.UserRepository;
 import com.daw.hotel.auth.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -19,25 +23,42 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public String login(String username, String password) {
+    // 🔹 LOGIN
+    public AuthResponse login(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuari no trobat"));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Contrasenya incorrecta");
+        if (!passwordEncoder.matches(password, user.password)) {
+            throw new RuntimeException("Password incorrecte");
         }
 
-        return jwtUtil.generateToken(user);
+        String token = jwtUtil.generateToken(user);
+        List<String> roles = user.roles.stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
+        return new AuthResponse(token, user.username, roles);
     }
 
-    public String register(User user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new RuntimeException("L'usuari ja existeix");
+    // 🔹 REGISTER
+    public AuthResponse register(User user) {
+        if (userRepository.findByUsername(user.username).isPresent()) {
+            throw new RuntimeException("L’usuari ja existeix");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return jwtUtil.generateToken(user);
+        // Codifica el password
+        user.password = passwordEncoder.encode(user.password);
+
+        // Guarda l’usuari
+        User savedUser = userRepository.save(user);
+
+        // Genera token
+        String token = jwtUtil.generateToken(savedUser);
+
+        List<String> roles = savedUser.roles.stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
+        return new AuthResponse(token, savedUser.username, roles);
     }
 }
-

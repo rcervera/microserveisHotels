@@ -29,7 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()  // permet login i registre sense token
+                .requestMatchers("/api/auth/**").permitAll()  // permet login i registre sense token
                 .anyRequest().authenticated()            // totes les altres rutes requereixen JWT
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

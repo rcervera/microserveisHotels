@@ -2,7 +2,7 @@ package com.daw.hotel.auth.dto;
 
 
 
-public class LoginRequest {
+public class AuthRequest {
     private String username;
     private String password;
 
@@ -19,7 +19,7 @@ public class LoginRequest {
         this.password = password;
     }
 
-    public LoginRequest() {
-    }
+    
+
 }
 
