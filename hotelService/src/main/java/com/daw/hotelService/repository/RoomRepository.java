@@ -1,6 +1,7 @@
 package com.daw.hotelService.repository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.daw.hotelService.dto.RoomDTO;
 import com.daw.hotelService.model.Hotel;
 import com.daw.hotelService.model.Room;
+import com.daw.hotelService.repository.projection.RoomInventoryProjection;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
@@ -32,4 +34,14 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
            "FROM Room r JOIN r.roomType rt " +
            "WHERE r.id = :roomId AND r.hotel.id = :hotelId")
     Optional<RoomDTO> findRoomByIdAndHotelIdAsDTO(Long roomId, Long hotelId);
+
+
+    @Query("""
+        SELECT r.hotel.id AS hotelId,
+               r.roomType.id AS roomTypeId,
+               COUNT(r.id) AS totalInventory
+        FROM Room r
+        GROUP BY r.hotel.id, r.roomType.id
+    """)
+    List<RoomInventoryProjection> getInventoryByHotelAndRoomType();
 }
