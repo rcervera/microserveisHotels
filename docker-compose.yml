@@ -1,5 +1,7 @@
+version: '3.9'
 
 services:
+
   eureka:
     build: ./Eureka
     container_name: eureka
@@ -12,7 +14,8 @@ services:
     build: ./api-gateway
     container_name: api-gateway
     depends_on:
-      - eureka
+      eureka:
+        condition: service_started
     ports:
       - "8080:8080"
     environment:
@@ -24,13 +27,15 @@ services:
     build: ./hotelService
     container_name: hotel-service
     depends_on:
-      - eureka
-      - mysql
+      mysql:
+        condition: service_healthy
+      eureka:
+        condition: service_started
     ports:
       - "5000:5000"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hoteldb
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hoteldb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
     networks:
@@ -40,31 +45,34 @@ services:
     build: ./reservationService
     container_name: reservation-service
     depends_on:
-      - eureka     
-      - mysql
+      mysql:
+        condition: service_healthy
+      eureka:
+        condition: service_started
     ports:
-      - "6000:6000"
+      - "5001:5001"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hotelReservations?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hotelReservations?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     networks:
       - hotel-network
-    
 
   auth-service:
     build: ./auth
     container_name: auth-service
     depends_on:
-      - eureka
-      - mysql
+      mysql:
+        condition: service_healthy
+      eureka:
+        condition: service_started
     ports:
       - "8082:8082"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/authdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/authdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -83,6 +91,11 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - hotel-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -98,16 +111,14 @@ services:
     networks:
       - hotel-network
   
-  # NOU SERVEI DE FRONTEND (REACT)
   ui-service:
     build: ./ui-service
     container_name: ui-service
-    ports:
-      # L'usuari visitarà localhost:3000
-      # El port intern de Nginx és el 80
-      - "3000:80"
     depends_on:
-      - api-gateway  # S'espera a que l'API Gateway s'iniciï
+      api-gateway:
+        condition: service_started
+    ports:
+      - "3000:80"
     networks:
       - hotel-network
 

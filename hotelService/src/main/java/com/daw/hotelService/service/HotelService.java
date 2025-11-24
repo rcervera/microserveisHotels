@@ -1,11 +1,14 @@
 package com.daw.hotelService.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.daw.hotelService.dto.CityDTO;
+import com.daw.hotelService.dto.HotelBasicDTO;
 import com.daw.hotelService.dto.HotelSummaryDTO;
 import com.daw.hotelService.model.Hotel;
 import com.daw.hotelService.repository.HotelRepository;
@@ -52,4 +55,23 @@ public class HotelService {
     public void deleteById(Long id) {
         hotelRepository.deleteById(id);
     }
+
+     public List<CityDTO> getAllCities() {
+        return hotelRepository.findAll()
+                .stream()
+                .map(h -> {
+            return new CityDTO(h.getLocation());
+        })
+                .distinct()
+                .toList();
+    }
+
+    public List<HotelBasicDTO> getHotelsByLocation(String location) {
+        return hotelRepository.findByLocationIgnoreCase(location)
+                .stream()
+                .map(h -> new HotelBasicDTO(h.getId(), h.getName(), h.getLocation()))
+                .toList();
+    }
+
+   
 }

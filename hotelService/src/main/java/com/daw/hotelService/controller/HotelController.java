@@ -1,6 +1,7 @@
 package com.daw.hotelService.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.daw.hotelService.dto.CityDTO;
+import com.daw.hotelService.dto.HotelBasicDTO;
 import com.daw.hotelService.dto.HotelSummaryDTO;
 import com.daw.hotelService.model.Hotel;
 import com.daw.hotelService.service.HotelService;
@@ -113,5 +116,15 @@ public class HotelController {
         errorResponse.put("error", "Not Found");
         errorResponse.put("message", ex.getMessage());
         return errorResponse;
+    }
+
+     @GetMapping("/cities")
+    public List<CityDTO> getCities() {
+        return hotelService.getAllCities();
+    }
+
+    @GetMapping("/by-city/{city}")
+    public List<HotelBasicDTO> getHotelsByCity(@PathVariable String city) {
+        return hotelService.getHotelsByLocation(city);
     }
 }

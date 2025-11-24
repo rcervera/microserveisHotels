@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.daw.hotelService.dto.RoomDTO;
 import com.daw.hotelService.model.Hotel;
 import com.daw.hotelService.model.Room;
+import com.daw.hotelService.model.RoomType;
 import com.daw.hotelService.repository.projection.RoomInventoryProjection;
 
 @Repository
@@ -20,6 +21,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     // Exemple de mètode personalitzat:
     // List<Room> findByHotelId(Long hotelId);
     Page<Room> findByHotel(Hotel hotel, Pageable pageable);
+
+    List<RoomType> findByHotelId(Long hotelId);
     
     @Query("SELECT new com.daw.hotelService.dto.RoomDTO(r.id, r.name, r.number, r.floor, r.isAvailable, rt.code, rt.description) " +
            "FROM Room r JOIN r.roomType rt " +

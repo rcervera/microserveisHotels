@@ -20,6 +20,9 @@ public class RoomType {
     private String code; // p.ex. "SINGLE", "DOUBLE"
     private String description;
 
+    private Integer maxAdults;
+    private Integer maxChildren;
+
     public RoomType() {}
 
     public RoomType(String code, String description) {
@@ -36,4 +39,9 @@ public class RoomType {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public Integer getMaxAdults() { return maxAdults; }
+    public void setMaxAdults(Integer maxAdults) { this.maxAdults = maxAdults; }
+    public Integer getMaxChildren() { return maxChildren; }
+    public void setMaxChildren(Integer maxChildren) { this.maxChildren = maxChildren; } 
 }

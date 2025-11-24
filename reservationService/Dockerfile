@@ -32,6 +32,6 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
 # Canviem el port per al hotel-service
-EXPOSE 6000
+EXPOSE 5001
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

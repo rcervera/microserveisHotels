@@ -9,12 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import com.daw.hotelService.dto.HotelSummaryDTO;
 import com.daw.hotelService.model.Hotel;
+import java.util.List;
 
 @Repository
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
     // Pots afegir consultes personalitzades si vols
     // Exemple:
     // List<Hotel> findByCiutat(String ciutat);
+    List<Hotel> findByLocationIgnoreCase(String location);
     
     // Cerca per nom, adreça o ubicació (conté)
     Page<Hotel> findByNameContainingIgnoreCaseOrAddressContainingIgnoreCaseOrLocationContainingIgnoreCase(
