@@ -2,11 +2,10 @@ package com.daw.hotelService.controller;
 
 
 
-import com.daw.hotelService.dto.RoomTypeDTO;
-import com.daw.hotelService.service.RoomTypeService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.daw.hotelService.service.RoomTypeService;
 
 @RestController
 @RequestMapping("/api/room-types")
@@ -18,8 +17,8 @@ public class RoomTypeController {
         this.roomTypeService = roomTypeService;
     }
 
-    @GetMapping("/hotel/{hotelId}")
-    public List<RoomTypeDTO> getRoomTypesByHotel(@PathVariable Long hotelId) {
-        return roomTypeService.getRoomTypesByHotel(hotelId);
-    }
+    //@GetMapping("/hotel/{hotelId}")
+    //public List<RoomTypeDTO> getRoomTypesByHotel(@PathVariable Long hotelId) {
+    //    return roomTypeService.getRoomTypesByHotel(hotelId);
+    //}
 }

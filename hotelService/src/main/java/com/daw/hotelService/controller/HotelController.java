@@ -23,16 +23,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daw.hotelService.dto.CityDTO;
-import com.daw.hotelService.dto.HotelBasicDTO;
 import com.daw.hotelService.dto.HotelSummaryDTO;
 import com.daw.hotelService.model.Hotel;
 import com.daw.hotelService.service.HotelService;
 
 @CrossOrigin("*")
-// Canviem la ruta base per seguir les convencions d'API REST
-@RequestMapping("/api/hotels")
-// Canviem @Controller per @RestController
 @RestController
+@RequestMapping("/api/hotels")
 public class HotelController {
 
     private final HotelService hotelService;
@@ -41,11 +38,8 @@ public class HotelController {
         this.hotelService = hotelService;
     }
 
-    /**
-     * GET /api/hotels
-     * Retorna una pàgina d'hotels (amb cerca opcional per 'keyword').
-     */
-   @GetMapping
+    // ---------------- GET HOTELS PAGINATS AMB OPCIÓ DE CERCA ----------------
+    @GetMapping
     public Page<HotelSummaryDTO> listHotels(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -53,62 +47,59 @@ public class HotelController {
 
         Pageable pageable = PageRequest.of(page, size);
         if (keyword.isEmpty()) {
-            return hotelService.findAll(pageable); // retorna el DTO
+            return hotelService.findAllHotels(pageable);
         } else {
-            return hotelService.search(keyword, pageable); // retorna el DTO
+            return hotelService.searchHotels(keyword, pageable);
         }
     }
 
-    /**
-     * GET /api/hotels/{id}
-     * Retorna un sol hotel pel seu ID.
-     */
+    // ---------------- GET HOTEL PER ID ----------------
     @GetMapping("/{id}")
-    public ResponseEntity<Hotel> getHotelById(@PathVariable Long id) {
-        Hotel hotel = hotelService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid hotel Id:" + id));
-        return ResponseEntity.ok(hotel);
+    public ResponseEntity<HotelSummaryDTO> getHotelById(@PathVariable Long id) {
+        Hotel hotel = hotelService.getHotelById(id); // retorna entitat
+        HotelSummaryDTO dto = new HotelSummaryDTO(
+                hotel.getId(),
+                hotel.getName(),
+                hotel.getAddress(),
+                hotel.getLocation()
+        );
+        return ResponseEntity.ok(dto);
     }
 
-    /**
-     * POST /api/hotels
-     * Crea un nou hotel rebent un JSON al body.
-     */
+    // ---------------- POST CREATE HOTEL ----------------
     @PostMapping
-    public ResponseEntity<Hotel> createHotel(@RequestBody Hotel hotel) {
-        Hotel savedHotel = hotelService.save(hotel);
-        // Retorna un 201 CREATED amb l'objecte creat
-        return new ResponseEntity<>(savedHotel, HttpStatus.CREATED);
+    public ResponseEntity<HotelSummaryDTO> createHotel(@RequestBody Hotel hotel) {
+        Hotel savedHotel = hotelService.createHotel(hotel);
+        HotelSummaryDTO dto = new HotelSummaryDTO(
+                savedHotel.getId(),
+                savedHotel.getName(),
+                savedHotel.getAddress(),
+                savedHotel.getLocation()
+        );
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
-    /**
-     * PUT /api/hotels/{id}
-     * Actualitza un hotel existent rebent un JSON al body.
-     */
+    // ---------------- PUT UPDATE HOTEL ----------------
     @PutMapping("/{id}")
-    public ResponseEntity<Hotel> updateHotel(@PathVariable Long id, @RequestBody Hotel hotel) {
-        // Assegurem que l'ID de la URL és el que es desa
-        hotel.setId(id);
-        Hotel updatedHotel = hotelService.save(hotel);
-        return ResponseEntity.ok(updatedHotel);
+    public ResponseEntity<HotelSummaryDTO> updateHotel(@PathVariable Long id, @RequestBody Hotel hotel) {
+        Hotel updatedHotel = hotelService.updateHotel(id, hotel);
+        HotelSummaryDTO dto = new HotelSummaryDTO(
+                updatedHotel.getId(),
+                updatedHotel.getName(),
+                updatedHotel.getAddress(),
+                updatedHotel.getLocation()
+        );
+        return ResponseEntity.ok(dto);
     }
 
-    /**
-     * DELETE /api/hotels/{id}
-     * Esborra un hotel pel seu ID.
-     */
+    // ---------------- DELETE HOTEL ----------------
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteHotel(@PathVariable Long id) {
-        hotelService.deleteById(id);
-        // Retorna un 204 NO CONTENT, indicant èxit sense cos de resposta
+        hotelService.deleteHotel(id);
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Gestor d'excepcions local per a aquest controlador.
-     * Si 'findById' llança IllegalArgumentException, es captura aquí
-     * i es retorna un 404 Not Found amb un missatge d'error en JSON.
-     */
+    // ---------------- EXCEPCIONS ----------------
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(IllegalArgumentException ex) {
@@ -118,13 +109,15 @@ public class HotelController {
         return errorResponse;
     }
 
-     @GetMapping("/cities")
+    // ---------------- GET CITIES ----------------
+    @GetMapping("/cities")
     public List<CityDTO> getCities() {
         return hotelService.getAllCities();
     }
 
+    // ---------------- GET HOTELS PER CIUTAT ----------------
     @GetMapping("/by-city/{city}")
-    public List<HotelBasicDTO> getHotelsByCity(@PathVariable String city) {
-        return hotelService.getHotelsByLocation(city);
+    public List<HotelSummaryDTO> getHotelsByCity(@PathVariable String city) {
+        return hotelService.findByLocation(city);
     }
 }

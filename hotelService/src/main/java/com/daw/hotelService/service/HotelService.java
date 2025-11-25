@@ -1,14 +1,14 @@
 package com.daw.hotelService.service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.daw.hotelService.dto.CityDTO;
-import com.daw.hotelService.dto.HotelBasicDTO;
 import com.daw.hotelService.dto.HotelSummaryDTO;
 import com.daw.hotelService.model.Hotel;
 import com.daw.hotelService.repository.HotelRepository;
@@ -16,62 +16,73 @@ import com.daw.hotelService.repository.HotelRepository;
 @Service
 public class HotelService {
 
-    private final HotelRepository hotelRepository;
+    @Autowired
+    private HotelRepository hotelRepository;
 
-    
-    public Page<HotelSummaryDTO> findAll(Pageable pageable) {
-        return hotelRepository.findAllSummary(pageable);
-    }
-    
-    public Page<HotelSummaryDTO> search(String keyword, Pageable pageable) {
-        return hotelRepository.searchSummary(keyword, pageable);
-    }
+    // ---------------- CRUD BÀSIC ----------------
 
-    public HotelService(HotelRepository hotelRepository) {
-        this.hotelRepository = hotelRepository;
-    }
-
-    // public Page<Hotel> findAll(Pageable pageable) {
-    //     return hotelRepository.findAll(pageable);
-    // }
-
-    // public Page<Hotel> search(String keyword, Pageable pageable) {
-    //     return hotelRepository.findByNameContainingIgnoreCaseOrAddressContainingIgnoreCaseOrLocationContainingIgnoreCase(
-    //             keyword, keyword, keyword, pageable
-    //     );
-    // }
-
-    /**
-     * CANVIAT: Ara retorna l'hotel desat (necessari per al POST i PUT de l'API REST).
-     */
-    public Hotel save(Hotel hotel) {
+    public Hotel createHotel(Hotel hotel) {
         return hotelRepository.save(hotel);
     }
 
-    public Optional<Hotel> findById(Long id) {
-        return hotelRepository.findById(id);
+    public Hotel getHotelById(Long id) {
+        return hotelRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hotel no trobat amb id: " + id));
     }
 
-    public void deleteById(Long id) {
+    public Hotel updateHotel(Long id, Hotel hotelDetails) {
+    Hotel hotel = getHotelById(id);
+    hotel.setName(hotelDetails.getName());
+    hotel.setAddress(hotelDetails.getAddress());
+    hotel.setLocation(hotelDetails.getLocation());
+    return hotelRepository.save(hotel);
+}
+
+
+    public void deleteHotel(Long id) {
         hotelRepository.deleteById(id);
     }
 
-     public List<CityDTO> getAllCities() {
-        return hotelRepository.findAll()
+    // ---------------- CONSULTES AMB DTO ----------------
+
+    public List<HotelSummaryDTO> findByLocation(String location) {
+        return hotelRepository.findByLocation(location)
                 .stream()
-                .map(h -> {
-            return new CityDTO(h.getLocation());
-        })
-                .distinct()
-                .toList();
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<HotelBasicDTO> getHotelsByLocation(String location) {
-        return hotelRepository.findByLocationIgnoreCase(location)
-                .stream()
-                .map(h -> new HotelBasicDTO(h.getId(), h.getName(), h.getLocation()))
-                .toList();
+    public List<String> findDistinctLocations() {
+        return hotelRepository.findDistinctLocations();
     }
 
-   
+    public Page<HotelSummaryDTO> findAllHotels(Pageable pageable) {
+        return hotelRepository.findAllHotels(pageable)
+                .map(this::toDTO);
+    }
+
+    public Page<HotelSummaryDTO> searchHotels(String keyword, Pageable pageable) {
+        return hotelRepository.searchHotels(keyword, pageable)
+                .map(this::toDTO);
+    }
+
+    // Al HotelService
+    public List<CityDTO> getAllCities() {
+        return hotelRepository.findDistinctLocations()
+                .stream()
+                .map(city -> new CityDTO(city))
+                .collect(Collectors.toList());
+    }
+
+
+    // ---------------- MÈTODE PRIVAT DE TRANSFORMACIÓ ----------------
+
+    private HotelSummaryDTO toDTO(Hotel hotel) {
+        return new HotelSummaryDTO(
+                hotel.getId(),
+                hotel.getName(),
+                hotel.getAddress(),
+                hotel.getLocation()
+        );
+    }
 }

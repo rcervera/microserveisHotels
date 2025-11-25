@@ -1,5 +1,6 @@
 package com.daw.hotelService.repository;
 
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,36 +8,49 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.daw.hotelService.dto.HotelSummaryDTO;
 import com.daw.hotelService.model.Hotel;
-import java.util.List;
 
 @Repository
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
-    // Pots afegir consultes personalitzades si vols
-    // Exemple:
-    // List<Hotel> findByCiutat(String ciutat);
-    List<Hotel> findByLocationIgnoreCase(String location);
-    
-    // Cerca per nom, adreça o ubicació (conté)
-    Page<Hotel> findByNameContainingIgnoreCaseOrAddressContainingIgnoreCaseOrLocationContainingIgnoreCase(
-        String name, String address, String location, Pageable pageable);
-
-    /**
-     * Busca tots els hotels i els retorna directament com a DTO.
-     *  
-     */
-    @Query("SELECT new com.daw.hotelService.dto.HotelSummaryDTO(h.id, h.name, h.address, h.location) FROM Hotel h")
-    Page<HotelSummaryDTO> findAllSummary(Pageable pageable);
-
     
     /**
-     * El mateix però amb la cerca.
+     * Retorna una llista d'hotels que coincideixen amb una ubicació (location),
+     * ignorant majúscules i minúscules.
+     *
+     * Exemple: findByLocation("barcelona")
+     *
      */
-    @Query("SELECT new com.daw.hotelService.dto.HotelSummaryDTO(h.id, h.name, h.address, h.location) FROM Hotel h " +
+    @Query("SELECT h FROM Hotel h WHERE LOWER(h.location) = LOWER(:location)")
+    List<Hotel> findByLocation(String location);
+
+
+    /**
+     * Obté totes les ubicacions úniques (locations) on hi ha hotels.
+     *
+     * Ex: ["Madrid", "Barcelona", "Sevilla"]
+     *
+     * Retorna només el camp location
+     */
+    @Query("SELECT DISTINCT h.location FROM Hotel h")
+    List<String> findDistinctLocations();
+
+
+    /**
+     * Retorna tots els hotels de manera paginada com ENTITATS completes.
+     *
+     */
+    @Query("SELECT h FROM Hotel h")
+    Page<Hotel> findAllHotels(Pageable pageable);
+
+
+    /**
+     * Igual que l'anterior, però aplicant un filtre de cerca.
+     * Cerca per: name, address o location.
+     *
+     */
+    @Query("SELECT h FROM Hotel h " +
            "WHERE LOWER(h.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
            "OR LOWER(h.address) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
            "OR LOWER(h.location) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    Page<HotelSummaryDTO> searchSummary(String keyword, Pageable pageable);
+    Page<Hotel> searchHotels(String keyword, Pageable pageable);
 }
-

@@ -16,8 +16,10 @@ public class RoomTypeService {
 
     public RoomTypeService(RoomTypeRepository hotelRoomTypeRepository) {
         this.hotelRoomTypeRepository = hotelRoomTypeRepository;
+
     }
 
+    /* 
     public List<RoomTypeDTO> getRoomTypesByHotel(Long hotelId) {
         List<RoomType> list = hotelRoomTypeRepository.findByHotel_Id(hotelId);
 
@@ -29,6 +31,7 @@ public class RoomTypeService {
                         rt.getMaxChildren()
                 ))
                 .toList();
-    }
+    } 
+    */
 }
 
