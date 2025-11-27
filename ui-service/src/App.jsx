@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Register from "./pages/Register";
 import { useAuthStore } from "./store/auth";
+import SearchPage from "./pages/SearchPage";
 
 export default function App() {
   const roles = useAuthStore((state) => state.roles);
@@ -32,6 +33,7 @@ export default function App() {
           {/* Subrutes */}
           <Route path="hotels" element={<Hotels />} />
           <Route path="reserva" element={<Reserva />} />
+          <Route path="search" element={<SearchPage />} />
         </Route>
 
       </Routes>

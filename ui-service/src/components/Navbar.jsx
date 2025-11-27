@@ -34,7 +34,7 @@ export default function Navbar({ roles }) {
       {/* Enllaços USER */}
       {isUser && (
         <>
-          <Link to="/dashboard/reserva" className="nav-link flex items-center gap-2">
+          <Link to="/dashboard/search" className="nav-link flex items-center gap-2">
             <CalendarPlus size={18} />
             Fer reserva
           </Link>
